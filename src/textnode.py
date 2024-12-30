@@ -19,3 +19,6 @@ class TextNode:
             return False
         else:
             return vars(self) == vars(other)
+        
+    def __repr__(self):
+        type(self)
