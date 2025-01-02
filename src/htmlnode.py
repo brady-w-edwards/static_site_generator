@@ -1,3 +1,5 @@
+from textnode import TextType, TextNode
+
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag
@@ -15,14 +17,6 @@ class HTMLNode:
         for prop in self.props:
             props_html += f' {prop}="{self.props[prop]}"'
         return props_html
-    
-    def __eq__(self, other):
-        return (
-            self.tag == other.tag
-            and self.value == other.value
-            and self.children == other.children
-            and self.props == other.props
-        )
 
     def __repr__(self):
         # HTMLNode(tag, value, children, props)
@@ -69,3 +63,20 @@ class LeafNode(HTMLNode):
     def __repr__(self):
         return f"LeafNode({self.tag}, {self.value}, {self.props})"
         
+
+def text_node_to_html_node(text_node):
+        if isinstance(text_node.text_type, TextType) == False:
+            raise Exception("Invalid text type")
+        match text_node.text_type.value:
+            case "normal":
+                return LeafNode(None, text_node.text)
+            case "bold":
+                return LeafNode("b", text_node.text)
+            case "italic":
+                return LeafNode("i", text_node.text)
+            case "code":
+                return LeafNode("code", text_node.text)
+            case "link":
+                return LeafNode("a", text_node.text, {"href": text_node.url})
+            case "image":
+                return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})

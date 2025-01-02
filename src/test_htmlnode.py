@@ -1,23 +1,9 @@
 import unittest
-from htmlnode import HTMLNode, LeafNode, ParentNode
+from htmlnode import HTMLNode, LeafNode, ParentNode, text_node_to_html_node
+from textnode import TextNode, TextType
 
 # HTML NODE TESTS
 class TestHTMLNode(unittest.TestCase):
-    def test_none(self):
-        node = HTMLNode()
-        node2 = HTMLNode()
-        self.assertEqual(node, node)
-
-    def test_eq(self):
-        node = HTMLNode("p", "This is a paragraph", None, None)
-        node2 = HTMLNode("p", "This is a paragraph")
-        self.assertEqual(node, node2)
-
-    def test_tag_not_eq(self):
-        node = HTMLNode("h1", "This is a heading")
-        node2 = HTMLNode("p", "This is a paragraph")
-        self.assertNotEqual(node, node2)
-
     def test_values(self):
         node = HTMLNode(
             "div",
@@ -128,4 +114,40 @@ class TestLeafNode(unittest.TestCase):
         self.assertEqual(
             node1.to_html(),
             '<a href="https://www.google.com">Click me!</a>'
+        )
+
+class TestTextToLeafNode(unittest.TestCase):
+    def text_normal(self):
+        normal_node = TextNode("this is my text", TextType.NORMAL)
+        self.assertEqual(
+            repr(text_node_to_html_node(normal_node)),
+            "LeafNode(None, this is my text, None)"
+        )
+
+    def test_bold(self):
+        bold_node = TextNode("this is my text", TextType.BOLD)
+        self.assertEqual(
+            repr(text_node_to_html_node(bold_node)),
+            "LeafNode(b, this is my text, None)"
+        )
+
+    def test_italic(self):
+        italic_node = TextNode("this is my text", TextType.ITALIC)
+        self.assertEqual(
+            repr(text_node_to_html_node(italic_node)),
+            "LeafNode(i, this is my text, None)"
+        )
+
+    def test_link(self):
+        link_node = TextNode("this is my text", TextType.LINK, "https://www.boot.dev")
+        self.assertEqual(
+            repr(text_node_to_html_node(link_node)),
+            "LeafNode(a, this is my text, {'href': 'https://www.boot.dev'})"
+        )
+
+    def test_image(self):
+        image_node = TextNode("this is my text", TextType.IMAGE, "https://www.boot.dev")
+        self.assertEqual(
+            repr(text_node_to_html_node(image_node)),
+            "LeafNode(img, , {'src': 'https://www.boot.dev', 'alt': 'this is my text'})"
         )
