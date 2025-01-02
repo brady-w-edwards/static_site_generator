@@ -1,6 +1,7 @@
 import unittest
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
+# HTML NODE TESTS
 class TestHTMLNode(unittest.TestCase):
     def test_none(self):
         node = HTMLNode()
@@ -59,7 +60,48 @@ class TestHTMLNode(unittest.TestCase):
         node = HTMLNode("a", "This is a link", None, props)
         self.assertEqual(' href="https://www.google.com" target="_blank"', node.props_to_html())
 
+# PARENT NODE TESTS
+class TestParentNode(unittest.TestCase):
+    def test_value(self):
+        node = ParentNode("p", [LeafNode("b", "Leaf node 1")])
+        self.assertEqual(node.__repr__(), 'ParentNode(p, children: [LeafNode(b, Leaf node 1, None)], None)')
 
+    def test_to_html(self):
+        node = ParentNode(
+            "p",
+            [
+                LeafNode("b", "Bold text"),
+                LeafNode(None, "Normal text"),
+                LeafNode("i", "italic text"),
+                LeafNode(None, "Normal text"),
+            ],
+        )
+        self.assertEqual(node.to_html(), "<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>")
+
+    def test_nested_parent(self):
+        parent = ParentNode("div", [
+            ParentNode("p", [
+                LeafNode("b", "Bold text")
+            ])
+        ])
+        self.assertEqual(parent.to_html(), "<div><p><b>Bold text</b></p></div>")
+
+    def test_props(self):
+        node = ParentNode("p",
+            [
+                LeafNode("b", "Bold text"),
+                LeafNode("a", "link text", {"href": "https://www.google.com"}),
+                LeafNode(None, "Normal text"),
+            ],
+            {"class": "link"}
+        )
+        self.assertEqual(
+            node.to_html(),
+            '<p class="link"><b>Bold text</b><a href="https://www.google.com">link text</a>Normal text</p>'
+            )
+
+
+# LEAF NODE TESTS
 class TestLeafNode(unittest.TestCase):
     def test_no_value(self):
         node = LeafNode("p", None)
@@ -80,10 +122,10 @@ class TestLeafNode(unittest.TestCase):
             "<p>This is a paragraph</p>"
         )
 
-    # def test_link_tag(self):
-    #     props = {"href": "https://www.google.com"}
-    #     node1 = LeafNode("a", "Click me!", props)
-    #     self.assertEqual(
-    #         node1.to_html(),
-    #         '<a href="https://www.google.com">Click me!</a>'
-    #     )
+    def test_link_tag(self):
+        props = {"href": "https://www.google.com"}
+        node1 = LeafNode("a", "Click me!", props)
+        self.assertEqual(
+            node1.to_html(),
+            '<a href="https://www.google.com">Click me!</a>'
+        )
