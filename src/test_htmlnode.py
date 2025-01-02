@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 
 class TestHTMLNode(unittest.TestCase):
     def test_none(self):
@@ -58,3 +58,32 @@ class TestHTMLNode(unittest.TestCase):
         }
         node = HTMLNode("a", "This is a link", None, props)
         self.assertEqual(' href="https://www.google.com" target="_blank"', node.props_to_html())
+
+
+class TestLeafNode(unittest.TestCase):
+    def test_no_value(self):
+        node = LeafNode("p", None)
+        try:
+            node.to_html()
+            print("Value error not raised")
+        except ValueError:
+            pass
+
+    def test_no_tag(self):
+        node = LeafNode(None, "This test should yield plain text")
+        self.assertEqual(node.to_html(), "This test should yield plain text")
+
+    def test_p_tag(self):
+        node = LeafNode("p", "This is a paragraph")
+        self.assertEqual(
+            node.to_html(),
+            "<p>This is a paragraph</p>"
+        )
+
+    # def test_link_tag(self):
+    #     props = {"href": "https://www.google.com"}
+    #     node1 = LeafNode("a", "Click me!", props)
+    #     self.assertEqual(
+    #         node1.to_html(),
+    #         '<a href="https://www.google.com">Click me!</a>'
+    #     )
