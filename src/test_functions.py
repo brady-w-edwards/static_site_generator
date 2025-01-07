@@ -1,6 +1,6 @@
 import unittest
 from textnode import TextNode
-from functions.split_delimiter import *
+from functions import *
 
 class TestSplitDelimiter(unittest.TestCase):
     def test_initial_result(self):
