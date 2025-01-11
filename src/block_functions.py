@@ -1,5 +1,26 @@
 import re
+from htmlnode import ParentNode, LeafNode
 
+
+# BLOCK TYPE CONSTANTS
+block_type_paragraph = "paragraph"
+block_type_heading = "heading"
+block_type_code = "code"
+block_type_quote = "quote"
+block_type_olist = "ordered_list"
+block_type_ulist = "unordered_list"
+
+
+def markdown_to_htmlnode(markdown):
+    blocks = markdown_to_blocks(markdown)
+    for block in blocks:
+        block_type = block_to_block_type(block)
+        if block_type == block_type_heading:
+            parent_node = ParentNode("h1", None)
+    pass
+
+def text_to_children(text):
+    pass
 
 def markdown_to_blocks(markdown):
     blocks = markdown.split("\n\n")
@@ -13,41 +34,33 @@ def markdown_to_blocks(markdown):
 
 
 def block_to_block_type(block):
-    if block.startswith("# "):
-        return "Heading 1"
-    if block.startswith("## "):
-        return "Heading 2"
-    if block.startswith("### "):
-        return "Heading 3"
-    if block.startswith("#### "):
-        return "Heading 4"
-    if block.startswith("##### "):
-        return "Heading 5"
-    if block.startswith("###### "):
-        return "Heading 6"
+    lines = block.split("\n")
+    
+    if block.startswith(("# ", "## ", "### ", "#### ", "##### ", "###### ")):
+        return block_type_heading
     if block.startswith("```") and block.endswith("```"):
-        return "code"
+        return block_type_code
     if block.startswith(">"):
-        quote_lines = block.splitlines()
-        for quote_line in quote_lines:
-            if quote_line.startswith(">"):
-                continue
-            raise Exception("Invalid Markdown: quote needs > in each line")
-        return "quote"
-    if block.startswith("* ") or block.startswith("- "):
-        unordered_lines = block.splitlines()
-        for unordered_line in unordered_lines:
-            if unordered_line.startswith("* ") or unordered_line.startswith("- "):
-                continue
-            raise Exception("Invalid Markdown: list needs * or - in each line")
-        return "unorderd_list"
+        for line in lines:
+            if not line.startswith(">"):
+                return block_type_paragraph
+        return block_type_quote
+    if block.startswith("* "):
+        for line in lines:
+            if not line.startswith("* "):
+                return block_type_paragraph
+        return block_type_ulist
+    if block.startswith("- "):
+        for line in lines:
+            if not line.startswith("- "):
+                return block_type_paragraph
+        return block_type_ulist
     if block.startswith("1. "):
-        ordered_lines = block.splitlines()
         i = 1
-        for ordered_line in ordered_lines:
-            if ordered_line.startswith(rf"^{i}\. .+$"):
-                continue
-            raise Exception("Invalid Markdown: list needs ordered numbers at each line")
-        return "ordered_list"
-    return "normal"
+        for line in lines:
+            if not line.startswith(f"{i}. "):
+                return block_type_paragraph
+            i += 1
+        return block_type_olist
+    return block_type_paragraph
     
