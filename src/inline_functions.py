@@ -3,6 +3,7 @@ import re
 from textnode import TextType, TextNode
 from htmlnode import LeafNode
 
+
 def text_to_textnodes(text):
     if text == "":
         return [TextNode(text, TextType.TEXT)]
@@ -14,11 +15,6 @@ def text_to_textnodes(text):
     done = split_nodes_link(image)
     return done
 
-def heading_type(text):
-    if not text.startswith("#"):
-        raise Exception("Incorrect Markdown: not a heading")
-    h_type = text.count("#")
-    return h_type
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
@@ -85,24 +81,6 @@ def split_nodes_link(old_nodes):
         if original_text != "":
             new_nodes.append(TextNode(original_text, TextType.TEXT))
     return new_nodes
-
-
-def text_node_to_html_node(text_node):
-        if isinstance(text_node.text_type, TextType) == False:
-            raise Exception("Invalid text type")
-        match text_node.text_type.value:
-            case "TEXT":
-                return LeafNode(None, text_node.text)
-            case "bold":
-                return LeafNode("b", text_node.text)
-            case "italic":
-                return LeafNode("i", text_node.text)
-            case "code":
-                return LeafNode("code", text_node.text)
-            case "link":
-                return LeafNode("a", text_node.text, {"href": text_node.url})
-            case "image":
-                return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
 
 
 def extract_markdown_images(text):
