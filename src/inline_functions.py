@@ -14,6 +14,11 @@ def text_to_textnodes(text):
     done = split_nodes_link(image)
     return done
 
+def heading_type(text):
+    if not text.startswith("#"):
+        raise Exception("Incorrect Markdown: not a heading")
+    h_type = text.count("#")
+    return h_type
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []

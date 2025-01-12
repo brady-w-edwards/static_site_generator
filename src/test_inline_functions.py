@@ -200,3 +200,11 @@ class TestInlineFunctions(unittest.TestCase):
     #             TextNode("bold again", TextType.BOLD)
     #         ]
     #     )
+
+    def test_heading_type(self):
+        text = "# Heading 1"
+        text2 = "## Heading 2"
+        text6 = "###### Heading 6"
+        self.assertEqual(heading_type(text), 1)
+        self.assertEqual(heading_type(text2), 2)
+        self.assertEqual(heading_type(text6), 6)
