@@ -32,9 +32,9 @@ def block_to_html_node(block):
     if block_type == block_type_quote:
         return quote_to_html_node(block)
     if block_type == block_type_olist:
-        return list_to_html_node(block, "olist")
+        return olist_to_html_node(block)
     if block_type == block_type_ulist:
-        return list_to_html_node(block, "ulist")
+        return ulist_to_html_node(block)
 
 
 def paragraph_to_html_node(block):
@@ -79,22 +79,32 @@ def quote_to_html_node(block):
     return ParentNode("blockquote", children)
 
 
-def list_to_html_node(block, list_type):
+def olist_to_html_node(block):
     items = block.split("\n")
     html_items = []
     for item in items:
         text = item[3:]
         children = text_to_children(text)
         html_items.append(ParentNode("li", children))
-    return ParentNode(f"{list_type}", html_items)
+    return ParentNode("ol", html_items)
+
+
+def ulist_to_html_node(block):
+    items = block.split("\n")
+    html_items = []
+    for item in items:
+        text = item[2:]
+        children = text_to_children(text)
+        html_items.append(ParentNode("li", children))
+    return ParentNode("ul", html_items)
 
 
 def text_to_children(text):
-    children = []
     text_nodes = text_to_textnodes(text)
+    children = []
     for text_node in text_nodes:
-        inline_html_node = text_node_to_html_node(text_node)
-        children.append(inline_html_node)
+        html_node = text_node_to_html_node(text_node)
+        children.append(html_node)
     return children
 
 

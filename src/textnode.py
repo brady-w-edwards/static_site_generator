@@ -31,7 +31,7 @@ def text_node_to_html_node(text_node):
         if isinstance(text_node.text_type, TextType) == False:
             raise Exception("Invalid text type")
         match text_node.text_type.value:
-            case "TEXT":
+            case "text":
                 return LeafNode(None, text_node.text)
             case "bold":
                 return LeafNode("b", text_node.text)

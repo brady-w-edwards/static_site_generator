@@ -9,8 +9,10 @@ def text_to_textnodes(text):
         return [TextNode(text, TextType.TEXT)]
     original = TextNode(text, TextType.TEXT)
     bold = split_nodes_delimiter([original], "**", TextType.BOLD)
-    italic = split_nodes_delimiter(bold, "*", TextType.ITALIC)
-    code = split_nodes_delimiter(italic, "`", TextType.CODE)
+    bold2 = split_nodes_delimiter(bold, "__", TextType.BOLD)
+    italic = split_nodes_delimiter(bold2, "*", TextType.ITALIC)
+    italic2 = split_nodes_delimiter(italic, "_", TextType.ITALIC)
+    code = split_nodes_delimiter(italic2, "`", TextType.CODE)
     image = split_nodes_image(code)
     done = split_nodes_link(image)
     return done
