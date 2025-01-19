@@ -1,11 +1,27 @@
 import os
+import pathlib
 import shutil
 from textnode import TextType, TextNode
 from block_functions import markdown_to_blocks, markdown_to_html_node
 
 def main():
     copy_dir_to_new_dir("./static", "./public")
-    generate_page("./content/index.md", "template.html", "./public")
+    generate_pages_recursively("./content", "template.html", "./public")
+
+
+def generate_pages_recursively(dir_path_content, template_path, dest_dir_path):
+    dir_path_content = pathlib.Path(dir_path_content)
+    dest_dir_path = pathlib.Path(dest_dir_path)
+    for item in dir_path_content.iterdir():
+        relative_path = item.relative_to(dir_path_content)
+        dest_path = dest_dir_path / relative_path
+        if item.is_dir():
+            dest_path.mkdir(parents=True, exist_ok=True)
+            generate_pages_recursively(item, template_path, dest_path)
+        elif item.is_file():
+            dest_path.parent.mkdir(parents=True, exist_ok=True)
+            generate_page(item.as_posix(), template_path, dest_dir_path)
+
 
 def generate_page(from_path, template_path, dest_path):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}...")
@@ -38,7 +54,6 @@ def generate_page(from_path, template_path, dest_path):
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
     
-
 
 def copy_dir_to_new_dir(source, destination):
     if os.path.exists(destination):
